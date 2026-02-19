@@ -193,10 +193,10 @@ Examples:
   identity list
   
   # Get channels for user
-  identity channels --canonical bowen
+  identity channels --canonical alice
   
   # Check owner status
-  identity is-owner --canonical bowen
+  identity is-owner --canonical alice
 """
     )
     

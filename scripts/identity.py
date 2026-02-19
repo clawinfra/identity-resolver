@@ -172,7 +172,7 @@ def resolve_canonical_id(
         owner_numbers: List of owner contact IDs (default: load from USER.md)
     
     Returns:
-        Canonical user ID (e.g., "bowen") or
+        Canonical user ID (e.g., "alice") or
         "stranger:{channel}:{provider_user_id}" for unmapped users
     
     Auto-registers owner numbers from workspace/USER.md if provided.

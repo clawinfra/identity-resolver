@@ -58,13 +58,13 @@ class TestIdentityResolver(unittest.TestCase):
     
     def test_sanitize_canonical_id_valid(self):
         """Test valid canonical ID sanitization."""
-        self.assertEqual(_sanitize_canonical_id("bowen"), "bowen")
+        self.assertEqual(_sanitize_canonical_id("alice"), "alice")
         self.assertEqual(_sanitize_canonical_id("alice-123"), "alice-123")
         self.assertEqual(_sanitize_canonical_id("user_42"), "user_42")
     
     def test_sanitize_canonical_id_uppercase(self):
         """Test uppercase gets lowercased."""
-        self.assertEqual(_sanitize_canonical_id("BOWEN"), "bowen")
+        self.assertEqual(_sanitize_canonical_id("BOWEN"), "alice")
         self.assertEqual(_sanitize_canonical_id("Alice"), "alice")
     
     def test_sanitize_canonical_id_special_chars(self):
