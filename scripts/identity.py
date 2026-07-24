@@ -30,6 +30,17 @@ def _get_workspace(workspace: Optional[str] = None) -> Path:
     # Default: current directory
     return Path.cwd()
 
+def _utc_now_iso() -> str:
+    """
+    Return the current UTC time as an RFC 3339 / ISO 8601 timestamp.
+
+    Uses a trailing "Z" to denote UTC (e.g. "2026-07-04T12:34:56.789012Z").
+    datetime.isoformat() on a tz-aware UTC value already emits a "+00:00"
+    offset, so we normalize that to "Z" rather than appending one, which
+    would otherwise produce an invalid "...+00:00Z" string.
+    """
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
 def _get_identity_map_path(workspace: Path) -> Path:
     """Get identity map file path."""
     # Try data/identity-map.json first (new standard)
@@ -219,14 +230,14 @@ def resolve_canonical_id(
                 "is_owner": True,
                 "display_name": owner_canonical.capitalize(),
                 "channels": [],
-                "created_at": datetime.now(timezone.utc).isoformat() + "Z",
-                "updated_at": datetime.now(timezone.utc).isoformat() + "Z"
+                "created_at": _utc_now_iso(),
+                "updated_at": _utc_now_iso()
             }
         
         # Add channel to owner
         if channel_id not in identity_map["identities"][owner_canonical]["channels"]:
             identity_map["identities"][owner_canonical]["channels"].append(channel_id)
-            identity_map["identities"][owner_canonical]["updated_at"] = datetime.now(timezone.utc).isoformat() + "Z"
+            identity_map["identities"][owner_canonical]["updated_at"] = _utc_now_iso()
             _save_identity_map(identity_map, ws)
         
         return owner_canonical
@@ -260,14 +271,14 @@ def add_channel(
             "is_owner": False,
             "display_name": display_name or canonical_id.capitalize(),
             "channels": [],
-            "created_at": datetime.now(timezone.utc).isoformat() + "Z",
-            "updated_at": datetime.now(timezone.utc).isoformat() + "Z"
+            "created_at": _utc_now_iso(),
+            "updated_at": _utc_now_iso()
         }
     
     # Add channel if not already present
     if channel_id not in identity_map["identities"][canonical_id]["channels"]:
         identity_map["identities"][canonical_id]["channels"].append(channel_id)
-        identity_map["identities"][canonical_id]["updated_at"] = datetime.now(timezone.utc).isoformat() + "Z"
+        identity_map["identities"][canonical_id]["updated_at"] = _utc_now_iso()
         _save_identity_map(identity_map, ws)
 
 def remove_channel(
@@ -287,7 +298,7 @@ def remove_channel(
         user_data = identity_map["identities"][canonical_id]
         if channel_id in user_data["channels"]:
             user_data["channels"].remove(channel_id)
-            user_data["updated_at"] = datetime.now(timezone.utc).isoformat() + "Z"
+            user_data["updated_at"] = _utc_now_iso()
             _save_identity_map(identity_map, ws)
 
 def list_identities(workspace: Optional[str] = None) -> Dict:
